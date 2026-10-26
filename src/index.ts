@@ -108,6 +108,7 @@ if (subcommand === 'setup') {
       const { configureDevActivity } = await import("./utils/dev-activity.js");
       const { setActiveShortcuts } = await import("./utils/two-factor-shortcuts.js");
       const { startUpdateChecks } = await import("./utils/update-checker.js");
+      const { CHECKS_NPM_FOR_UPDATES } = await import("./utils/commands.js");
       const { createRuntime } = await import("./server.js");
       configureDevActivity(config.sessionDir, { version: PKG_VERSION, role: "server" });
       // Lets the MFA approval message mention the setup options only to users
@@ -122,7 +123,7 @@ if (subcommand === 'setup') {
       // Check for updates now, then every few hours. A server can stay alive
       // for days, so a boot-only check would never see a release. The
       // interval is unref'd and cannot hold the process open.
-      startUpdateChecks({ transport: mode === "http" ? "http" : "stdio" });
+      if (CHECKS_NPM_FOR_UPDATES) startUpdateChecks({ transport: mode === "http" ? "http" : "stdio" });
 
       // Log active course filter config if any filter is set
       if (config.courseFilter.includeCourseIds || config.courseFilter.excludeCourseIds || !config.courseFilter.activeOnly) {

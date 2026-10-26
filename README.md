@@ -8,6 +8,10 @@
 
 > **By [Rohan Muppa](https://github.com/rohanmuppa), ECE @ Purdue**
 
+> **This is a fork** of [RohanMuppa/brightspace-mcp-server](https://github.com/RohanMuppa/brightspace-mcp-server) by Rohan Muppa, used under its MIT license (the `LICENSE` file and the copyright notices in the source are unchanged). It is maintained by [ilushenz](https://github.com/ilushenz) and is not affiliated with or endorsed by the original author.
+>
+> **What differs from upstream:** sign-in support for the University of Hawaiʻi's Lāmakū (`--uh`: UH login button, CAS, Duo push), plus the changes needed to run it as a fork: it is installed from GitHub with `npx -y github:ilushenz/brightspace-mcp-server` instead of npm, registers itself (not the npm release) in your AI app, builds on install, and does not check npm for updates. The badges above describe the upstream npm package, not this fork. Upstream's own fixes and features are welcome to flow in; this fork tracks it, but not automatically.
+
 Lets your AI see your Brightspace classes, so you can just ask:
 
 > "What's due this week?" · "Am I passing all my classes?" · "Summarize today's announcements" · "Turn my lecture slides into flashcards"
@@ -23,7 +27,7 @@ Works with Claude Desktop, Claude Code, Cursor, ChatGPT Desktop, Windsurf, and a
 1. **Install [Node.js](https://nodejs.org/)** (version 22 or newer) if you don't have it. Download, run the installer, done.
 2. **Open a terminal and run the setup:**
    ```bash
-   npx -y brightspace-mcp-server@latest setup
+   npx -y github:ilushenz/brightspace-mcp-server setup
    ```
    It asks for your school's Brightspace address, your username and password, and how you confirm it's you when you sign in (a phone app, or another way like a text message). Your password goes into your computer's own password store (Keychain on Mac, Credential Manager on Windows), never into a file. Before signing you in, it connects itself to Claude Desktop, Cursor, Antigravity, Codex, or Claude Code if you have them. If one of them already has a `brightspace` entry pointing somewhere else (an old local build, a fork), setup shows you that entry and asks before replacing it.
 
@@ -42,7 +46,7 @@ https://github.com/RohanMuppa/brightspace-mcp-server/blob/main/LLMs.md
 
 The AI does everything it can by itself: it checks your computer, downloads the browser sign-in uses, and connects your AI apps. Then it gives you one command to run in a terminal. That command asks for your password and waits for you to approve the sign-in on your phone. That's the only part that needs you. Afterwards the AI checks that it can see your courses.
 
-Using a different AI app? Add the command `npx -y brightspace-mcp-server@latest` to its MCP settings (on Windows: `cmd /c npx -y brightspace-mcp-server@latest`). Exact steps for each app: [docs/troubleshooting.md](docs/troubleshooting.md).
+Using a different AI app? Add the command `npx -y github:ilushenz/brightspace-mcp-server` to its MCP settings (on Windows: `cmd /c npx -y github:ilushenz/brightspace-mcp-server`). Exact steps for each app: [docs/troubleshooting.md](docs/troubleshooting.md).
 
 ## Does my school work?
 
@@ -128,7 +132,7 @@ You can also run **one** copy yourself and point every chat at it by URL. It use
    Save it as a user environment variable named `D2L_HTTP_TOKEN`, where both the server and Codex can see it. On Windows: Start → "Edit environment variables for your account" → New, paste it as the value (apps and terminals opened afterwards see it). On macOS or Linux: add `export D2L_HTTP_TOKEN=<token>` to your shell profile (`~/.zshrc`, `~/.bashrc`); a Codex app launched from the Dock or a desktop menu may not read that profile, so start it from a terminal. The server never prints the token.
 2. **Start the server and leave it running** in a terminal of its own:
    ```bash
-   npx -y brightspace-mcp-server@latest http
+   npx -y github:ilushenz/brightspace-mcp-server http
    ```
    This needs a release with HTTP support; to try it from a source checkout first, run `npm run build`, then `node build/index.js http`. It listens on `http://127.0.0.1:18765/mcp`, on this computer only. Pick another port with `--port 18766` or `D2L_HTTP_PORT`, and use that same port in the URL in step 3. Start it once per login: chats do not start it, and a second copy on the same port stops at once with "already in use" rather than running alongside the first. Nothing signs in at startup.
 3. **Point Codex at it.** In `~/.codex/config.toml`, replace the `command` and `args` lines of your `[mcp_servers.brightspace]` entry with:
@@ -153,24 +157,24 @@ Any other MCP client that can connect to a Streamable HTTP URL with a bearer tok
 There's no separate login — asking a question signs you in, and it stays signed in on its own most days. When your school wants two-factor again, the number to approve shows up right in the answer; approve it on your phone and the assistant keeps checking on its own — each check waits up to 45 seconds and the original question completes as soon as the sign-in does, without you having to say you've approved it. If your AI client shows tool progress messages, the number appears while the question is still running instead. If it ever gets stuck, run this in a terminal:
 
 ```bash
-npx -y brightspace-mcp-server@latest auth
+npx -y github:ilushenz/brightspace-mcp-server auth
 ```
 
 **On a Mac,** sign-in first reads your saved password from Keychain. If you picked a one-time **Allow** at the Keychain prompt, a later sign-in from your AI app or another terminal can fail or hang waiting for an approval nobody sees; pick **Always Allow** instead. That permission only lets the local Brightspace server read its own saved sign-in password, nothing else in your Keychain.
 
 **Want fewer 2FA prompts?** `setup` asks one question, "How often do you want to approve sign-ins on your phone?": **1** every time (default), **2** remember this computer, or **3** let this computer answer Microsoft's code requests itself (needs an authenticator setup key). Options 2 and 3 are opt-in and not for shared computers; to turn them off, rerun `setup` and pick 1. The tradeoffs and the steps for getting the key are in [docs/sign-in.md](docs/sign-in.md#fewer-2fa-prompts).
 
-**To sign out early** (on a shared computer, say), just ask your AI app to sign you out of Brightspace, or run `npx -y brightspace-mcp-server@latest auth --logout` in a terminal. It deletes this computer's saved Brightspace session, so the next question does a full sign-in. Your saved password, authenticator key, and settings are kept, so with a saved authenticator key that sign-in can finish without you; on a shared computer, also delete the saved `brightspace-mcp-server` entries from your computer's password store (Keychain Access on a Mac, Credential Manager on Windows). Other AI apps open on this computer are signed out too and will ask you to sign in on their next question. (An app you opened before updating may keep answering for up to an hour; quit and reopen it to sign it out right away.) It only clears this computer; it does not sign you out of Microsoft or Brightspace anywhere else. Both also cancel a sign-in an AI app started that is still waiting for you to approve it (`auth --logout` can't on Windows, and leaves an `auth` run in another terminal alone, deleting nothing). Cancelling doesn't get you a new prompt any sooner: Microsoft won't send another until the earlier one expires, up to 5 minutes after it was sent.
+**To sign out early** (on a shared computer, say), just ask your AI app to sign you out of Brightspace, or run `npx -y github:ilushenz/brightspace-mcp-server auth --logout` in a terminal. It deletes this computer's saved Brightspace session, so the next question does a full sign-in. Your saved password, authenticator key, and settings are kept, so with a saved authenticator key that sign-in can finish without you; on a shared computer, also delete the saved `brightspace-mcp-server` entries from your computer's password store (Keychain Access on a Mac, Credential Manager on Windows). Other AI apps open on this computer are signed out too and will ask you to sign in on their next question. (An app you opened before updating may keep answering for up to an hour; quit and reopen it to sign it out right away.) It only clears this computer; it does not sign you out of Microsoft or Brightspace anywhere else. Both also cancel a sign-in an AI app started that is still waiting for you to approve it (`auth --logout` can't on Windows, and leaves an `auth` run in another terminal alone, deleting nothing). Cancelling doesn't get you a new prompt any sooner: Microsoft won't send another until the earlier one expires, up to 5 minutes after it was sent.
 
 How often you're asked is up to your school, not this tool. Everything else about sign-in — Duo, authenticator codes, visible-browser mode, and running without a browser at all (Docker, WSL, hardware keys) — is in [docs/sign-in.md](docs/sign-in.md).
 
 ## Something not working?
 
-- Run `npx -y brightspace-mcp-server@latest doctor` first — it checks your Node version, the sign-in browser, saved setup, credential store, Brightspace connectivity, saved sign-in, and installed version, and tells you exactly what to fix. For a global installation, use `brightspace-mcp-server doctor` to check the copy your client launches.
+- Run `npx -y github:ilushenz/brightspace-mcp-server doctor` first — it checks your Node version, the sign-in browser, saved setup, credential store, Brightspace connectivity, saved sign-in, and installed version, and tells you exactly what to fix. For a global installation, use `brightspace-mcp-server doctor` to check the copy your client launches.
 - **Browser removed during disk cleanup?** Sign-in restores a missing Chromium download once and retries automatically. It uses the installed Playwright dependency's browser revision and preserves saved credentials, MFA enrollment and sessions. Downloads have a two-minute limit; offline or failed repairs return an actionable installation error instead of asking you to reset credentials.
-- **Repair without signing in or changing client configuration:** run `brightspace-mcp-server repair` for a global install, or `npx -y brightspace-mcp-server@latest repair` for an npx installation. Add `--json` for automation. Diagnostics print an absolute command for the exact installation being checked. Repair verifies both the full browser executable and a real headless launch and close. It does not register clients, update school settings, or start SSO/MFA.
+- **Repair without signing in or changing client configuration:** run `brightspace-mcp-server repair` for a global install, or `npx -y github:ilushenz/brightspace-mcp-server repair` for an npx installation. Add `--json` for automation. Diagnostics print an absolute command for the exact installation being checked. Repair verifies both the full browser executable and a real headless launch and close. It does not register clients, update school settings, or start SSO/MFA.
 - Browser downloads are disposable; files inside an installed package's `node_modules` are dependency code. If those files were deleted, diagnostics give an installation-scoped npm command to restore the package's declared dependencies first. Browser repair does not run npm or upgrade packages automatically.
-- **`Authentication failed: The native credential store is locked or unavailable.`** Your password store is locked or hasn't let this server read the saved password. Unlock it (on a Mac, log in or unlock Keychain Access), then run `npx -y brightspace-mcp-server@latest auth` again, or `setup` if that still fails, and choose **Always Allow** when Keychain asks.
+- **`Authentication failed: The native credential store is locked or unavailable.`** Your password store is locked or hasn't let this server read the saved password. Unlock it (on a Mac, log in or unlock Keychain Access), then run `npx -y github:ilushenz/brightspace-mcp-server auth` again, or `setup` if that still fails, and choose **Always Allow** when Keychain asks.
 - **It works in the terminal but not in the app:** the app starts it separately and may not see your password store yet — see [docs/troubleshooting.md](docs/troubleshooting.md).
 - **The app says the server timed out while starting:** open the app's MCP server log. Each startup step prints a timestamped `Startup: ...` line before it begins and `done in N ms` when it ends, and a step still running after 10 seconds prints `Startup: still ...` once. The last such line names the step it was stuck in, often the saved-password lookup in your password store. These lines never include your username, password, or cookies.
 - **Which version do I have?** Ask your AI "which version of the Brightspace server am I running?"

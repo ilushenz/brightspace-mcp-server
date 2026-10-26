@@ -10,7 +10,7 @@ Before anything else, read [README.md](https://github.com/RohanMuppa/brightspace
 
 An MCP (Model Context Protocol) server that connects an AI client to D2L Brightspace so it can read grades, assignments, announcements, syllabus, roster, discussions, and course content on demand.
 
-Distributed on npm as `brightspace-mcp-server`. Register it as `npx -y brightspace-mcp-server@latest` so each client start pulls the newest version. Always include the `@latest` tag: without it npx prefers a binary already on PATH and will silently run an old global install instead. The auth CLI re-execs itself through the pinned command when it detects it is stale.
+This is a fork of the upstream project ([RohanMuppa/brightspace-mcp-server](https://github.com/RohanMuppa/brightspace-mcp-server), MIT licensed, by Rohan Muppa) that adds University of Hawaiʻi (Lāmakū) sign-in (`--uh`). It is installed straight from GitHub, not from npm: register it as `npx -y github:ilushenz/brightspace-mcp-server`. Do not use `github:ilushenz/brightspace-mcp-server` from npm for a UH student: that is the upstream release, which (as of this fork) cannot sign in at Lāmakū, and a stale copy of it on the PATH or in the npx cache would quietly replace this one. The first run downloads and builds the package, which can take a minute or two; later runs reuse it. This fork does not check npm for newer versions, so ignore any advice to run the npm release.
 
 ## Installing it for a user
 
@@ -21,7 +21,7 @@ Installing takes three stages: you do everything you can, the person signs in, t
 Check `node --version` first. If Node is missing or below v22, tell the user to install the LTS from https://nodejs.org/ and stop. Then ask the user, in chat, which school they're at and the username they sign in with. Don't ask for their password; only stage 2 takes it, typed by them.
 
 ```bash
-npx -y brightspace-mcp-server@latest setup --purdue --prepare --username <their username> --json
+npx -y github:ilushenz/brightspace-mcp-server setup --purdue --prepare --username <their username> --json
 ```
 
 How to run it:
@@ -50,14 +50,14 @@ With `--json`, stdout is one JSON object. Progress lines go to stderr.
 - `restart[]`: the apps that need restarting to load the server.
 - `next`: `{command, needsHuman, instructions}`.
 
-For any other client (Windsurf, Copilot, Zed, Continue, etc.), register `npx -y brightspace-mcp-server@latest` yourself. On Windows that is `cmd /c npx -y brightspace-mcp-server@latest`. Config formats and paths differ per client and change over time, so check the client's current docs rather than guessing.
+For any other client (Windsurf, Copilot, Zed, Continue, etc.), register `npx -y github:ilushenz/brightspace-mcp-server` yourself. On Windows that is `cmd /c npx -y github:ilushenz/brightspace-mcp-server`. Config formats and paths differ per client and change over time, so check the client's current docs rather than guessing.
 
 ### 2. Hand the sign-in to the person
 
 `next.command` is the person's step, for example:
 
 ```bash
-npx -y brightspace-mcp-server@latest setup --purdue --sign-in
+npx -y github:ilushenz/brightspace-mcp-server setup --purdue --sign-in
 ```
 
 It uses what stage 1 saved and asks only what needs them:
@@ -83,7 +83,7 @@ The interactive wizard, `setup --purdue` with no mode flag, still works for a pe
 ### 3. Verify
 
 ```bash
-npx -y brightspace-mcp-server@latest doctor --json
+npx -y github:ilushenz/brightspace-mcp-server doctor --json
 ```
 
 `allOk: true` means the setup, the saved sign-in and one real course-list request all worked. Each failed check's `line` names its fix.
@@ -136,7 +136,7 @@ running as that user, which is why it ships off by default.
 Visible mode applies to the manual `auth` command, whose window remains open for up to five minutes when automatic credential handling is unavailable or the identity provider needs direct interaction. Automatic recovery spawned by `AuthRunner` runs headless unless `D2L_HEADLESS` is set explicitly. Rerunning setup preserves the existing hidden or visible preference as the default choice.
 
 ```bash
-npx -y brightspace-mcp-server@latest auth
+npx -y github:ilushenz/brightspace-mcp-server auth
 ```
 
 ### Fewer 2FA prompts (the two opt-in shortcuts)
@@ -152,7 +152,7 @@ npx -y brightspace-mcp-server@latest auth
 When the user wants to end the saved session before it lapses (a shared computer, handing the machine on, forcing a fresh sign-in), either call the `sign_out` tool (only when they explicitly ask; it runs the same deletion in-process) or have them run:
 
 ```bash
-npx -y brightspace-mcp-server@latest auth --logout
+npx -y github:ilushenz/brightspace-mcp-server auth --logout
 ```
 
 It resolves the account's session directory exactly as sign-in does (`D2L_SESSION_DIR` override, else the configured or default `~/.d2l-session`, plus `accounts/<account-hash>/` only when a username is configured) and deletes `session.json`, `storage-state.encrypted.json`, and `microsoft-session.json` there, plus a plaintext `storage-state.json` if an old install left one. It prints the names it removed. The next tool call, or `auth`, does a full sign-in.
@@ -349,22 +349,22 @@ src/
 
 | Command | What it does |
 |---------|--------------|
-| `npx -y brightspace-mcp-server@latest setup` | Interactive setup wizard (needs a terminal) |
-| `npx -y brightspace-mcp-server@latest setup --purdue --prepare --username <u> --json` | For AI agents: everything but the password and sign-in, with no prompts — checks, Chromium download, settings, registering AI apps. Takes `--url`, `--campus`, `--replace`, `--no-browser-install`. See [Installing it for a user](#installing-it-for-a-user) |
-| `npx -y brightspace-mcp-server@latest setup --purdue --sign-in` | The person's last install step: password, how they confirm sign-in, then sign-in. Uses what `--prepare` saved |
-| `npx -y brightspace-mcp-server@latest setup --help` | Every setup flag |
-| `npx -y brightspace-mcp-server@latest setup --purdue` | Setup with Purdue preset |
-| `npx -y brightspace-mcp-server@latest setup --suny` | Setup with SUNY preset (also asks for campus) |
-| `npx -y brightspace-mcp-server@latest setup --cuny` | Setup with CUNY preset |
-| `npx -y brightspace-mcp-server@latest setup --mcgill` | Setup with McGill preset |
-| `npx -y brightspace-mcp-server@latest setup --ngeeann` | Setup with Ngee Ann Polytechnic preset |
-| `npx -y brightspace-mcp-server@latest setup --javeriana` | Setup with Javeriana Cali preset |
-| `npx -y brightspace-mcp-server@latest auth` | Manual reauth |
-| `npx -y brightspace-mcp-server@latest auth --logout` | Delete this computer's saved session so the next call does a full sign-in. Keeps the password, `config.json`, and credential-store entries. Local only |
-| `npx -y brightspace-mcp-server@latest doctor` | Diagnose a broken setup — Node version, Chromium, saved config, credential store, Brightspace reachability, saved sign-in, a real course-list call, and installed version, each as a ✓/✗ line with one plain-English next step, then one informational line on the 2FA shortcuts (remember this device, saved authenticator key). `--json` prints `{checks, allOk, notes}` instead |
-| `npx -y brightspace-mcp-server@latest` | Run the MCP server (registered in AI client config) |
-| `npx -y brightspace-mcp-server@latest` (default) | stdio relay. The first message starts (or reuses) one detached shared runtime per account, settings, and package version, under `<session dir>/shared-runtime/<hash>/` (`state.json`, `runtime.log`); every client sharing those settings shares its sign-in, session, and cache. Concurrent starts converge on one; it stops after `D2L_RUNTIME_IDLE_SECONDS` (default 600) with no request in progress and the next request starts it again. Sign-in progress lines go to `runtime.log`; each call's MFA challenge still reaches the calling client |
-| `npx -y brightspace-mcp-server@latest http` | Opt-in: one shared Streamable HTTP server at `http://127.0.0.1:18765/mcp` for every client on the computer, instead of the automatic shared runtime. Needs `D2L_HTTP_TOKEN`; takes `--port`. The user starts it and keeps it running; clients connect by URL and never start it, and a second copy on a taken port exits with an error. Ctrl+C lets calls in progress finish. Setup steps: [README](README.md#running-the-shared-server-yourself-optional) |
+| `npx -y github:ilushenz/brightspace-mcp-server setup` | Interactive setup wizard (needs a terminal) |
+| `npx -y github:ilushenz/brightspace-mcp-server setup --purdue --prepare --username <u> --json` | For AI agents: everything but the password and sign-in, with no prompts — checks, Chromium download, settings, registering AI apps. Takes `--url`, `--campus`, `--replace`, `--no-browser-install`. See [Installing it for a user](#installing-it-for-a-user) |
+| `npx -y github:ilushenz/brightspace-mcp-server setup --purdue --sign-in` | The person's last install step: password, how they confirm sign-in, then sign-in. Uses what `--prepare` saved |
+| `npx -y github:ilushenz/brightspace-mcp-server setup --help` | Every setup flag |
+| `npx -y github:ilushenz/brightspace-mcp-server setup --purdue` | Setup with Purdue preset |
+| `npx -y github:ilushenz/brightspace-mcp-server setup --suny` | Setup with SUNY preset (also asks for campus) |
+| `npx -y github:ilushenz/brightspace-mcp-server setup --cuny` | Setup with CUNY preset |
+| `npx -y github:ilushenz/brightspace-mcp-server setup --mcgill` | Setup with McGill preset |
+| `npx -y github:ilushenz/brightspace-mcp-server setup --ngeeann` | Setup with Ngee Ann Polytechnic preset |
+| `npx -y github:ilushenz/brightspace-mcp-server setup --javeriana` | Setup with Javeriana Cali preset |
+| `npx -y github:ilushenz/brightspace-mcp-server auth` | Manual reauth |
+| `npx -y github:ilushenz/brightspace-mcp-server auth --logout` | Delete this computer's saved session so the next call does a full sign-in. Keeps the password, `config.json`, and credential-store entries. Local only |
+| `npx -y github:ilushenz/brightspace-mcp-server doctor` | Diagnose a broken setup — Node version, Chromium, saved config, credential store, Brightspace reachability, saved sign-in, a real course-list call, and installed version, each as a ✓/✗ line with one plain-English next step, then one informational line on the 2FA shortcuts (remember this device, saved authenticator key). `--json` prints `{checks, allOk, notes}` instead |
+| `npx -y github:ilushenz/brightspace-mcp-server` | Run the MCP server (registered in AI client config) |
+| `npx -y github:ilushenz/brightspace-mcp-server` (default) | stdio relay. The first message starts (or reuses) one detached shared runtime per account, settings, and package version, under `<session dir>/shared-runtime/<hash>/` (`state.json`, `runtime.log`); every client sharing those settings shares its sign-in, session, and cache. Concurrent starts converge on one; it stops after `D2L_RUNTIME_IDLE_SECONDS` (default 600) with no request in progress and the next request starts it again. Sign-in progress lines go to `runtime.log`; each call's MFA challenge still reaches the calling client |
+| `npx -y github:ilushenz/brightspace-mcp-server http` | Opt-in: one shared Streamable HTTP server at `http://127.0.0.1:18765/mcp` for every client on the computer, instead of the automatic shared runtime. Needs `D2L_HTTP_TOKEN`; takes `--port`. The user starts it and keeps it running; clients connect by URL and never start it, and a second copy on a taken port exits with an error. Ctrl+C lets calls in progress finish. Setup steps: [README](README.md#running-the-shared-server-yourself-optional) |
 | `npm run build` | Compile TypeScript to `build/` |
 | `npm run dev` | Watch-mode TypeScript compile |
 | `npm run test` | Run Vitest suite |

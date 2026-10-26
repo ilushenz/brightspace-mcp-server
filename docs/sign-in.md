@@ -35,9 +35,9 @@ Every sign-in then needs your phone, including automatic ones after a session ex
 
 Option 3 also turns option 2 on, so you get both. It only helps when Microsoft asks for a 6-digit code: if your school only sends a number to approve and offers no code option, sign-in falls back to your phone exactly as it does today. If you pick 3 and press Enter without pasting a key, `setup` says so and saves option 2.
 
-**Turn on:** run `npx -y brightspace-mcp-server@latest setup` again and pick 2 or 3. `setup` shows what is on now ("Currently: 2 — remember this computer") and Enter keeps it.
+**Turn on:** run `npx -y github:ilushenz/brightspace-mcp-server setup` again and pick 2 or 3. `setup` shows what is on now ("Currently: 2 — remember this computer") and Enter keeps it.
 
-**Turn off:** run `setup` again and pick **1**. If an authenticator key is saved, `setup` then asks whether to remove it from this computer's credential store (default yes); answering no keeps the key, which means Microsoft's code requests are still answered automatically. Check what is on any time with `npx -y brightspace-mcp-server@latest doctor`.
+**Turn off:** run `setup` again and pick **1**. If an authenticator key is saved, `setup` then asks whether to remove it from this computer's credential store (default yes); answering no keeps the key, which means Microsoft's code requests are still answered automatically. Check what is on any time with `npx -y github:ilushenz/brightspace-mcp-server doctor`.
 
 **Shared computer:** pick 1. Option 2 lets anyone using your account here skip the second factor, and option 3 puts your password and second factor on the same machine.
 
@@ -66,7 +66,7 @@ Purdue allows this and documents it in its own knowledge base (KB 2219). Other s
 A missed MFA approval pauses automatic sign-in for 5 minutes. This retries immediately, takes over a stuck sign-in, or asks for a code:
 
 ```bash
-npx -y brightspace-mcp-server@latest auth
+npx -y github:ilushenz/brightspace-mcp-server auth
 ```
 
 Run it from your home folder — macOS blocks `npx` from Documents, Desktop, or Downloads without Files and Folders permission (`EPERM`). Grant access in System Settings → Privacy & Security → Files and Folders, or run elsewhere.
@@ -76,7 +76,7 @@ Run it from your home folder — macOS blocks `npx` from Documents, Desktop, or 
 To end the saved session before it lapses (on a shared computer, say) or to force a fresh sign-in, run:
 
 ```bash
-npx -y brightspace-mcp-server@latest auth --logout
+npx -y github:ilushenz/brightspace-mcp-server auth --logout
 ```
 
 This deletes the saved session files for your configured account on this computer (it prints their names), so the next question, or `auth`, does a full sign-in. It keeps your saved password, `config.json`, and any authenticator or credential-store entries. It is a local sign-out only: it does not sign you out of Microsoft or Brightspace on their servers, so a browser you used elsewhere stays signed in.
@@ -93,7 +93,7 @@ Other AI apps open on this computer are signed out too and will ask you to sign 
 | SUNY | `--suny` | Campuses share one Brightspace site; the preset asks which campus you're at and skips SUNY's campus picker at sign-in. |
 | Western University | `--western` | Microsoft Entra. |
 | TU Delft | `--tudelft` | Use your NetID, not your student email. Headless NetID username and password sign-in only, including automatic re-authentication when the saved session expires; it does not support MFA or any other interactive step. If your account requires one, [open an issue](https://github.com/RohanMuppa/brightspace-mcp-server/issues). |
-| CUNY | `--cuny` | Sign in with your full CUNY Login address (`firstname.lastname01@login.cuny.edu`); authentication asks in the terminal for the 6-digit code from your authenticator app. CUNY asks for that code on every full sign-in, so when your Brightspace session ends, run `npx -y brightspace-mcp-server@latest auth` in a terminal again. |
+| CUNY | `--cuny` | Sign in with your full CUNY Login address (`firstname.lastname01@login.cuny.edu`); authentication asks in the terminal for the 6-digit code from your authenticator app. CUNY asks for that code on every full sign-in, so when your Brightspace session ends, run `npx -y github:ilushenz/brightspace-mcp-server auth` in a terminal again. |
 | Leiden University | `--leiden` | Sign in with your full Microsoft address (for example `s1234567@vuw.leidenuniv.nl`). The flow picks Leiden University (Entra) on SURFconext's account page, then uses the same Microsoft sign-in as Purdue. Leiden normally asks for a code from your authenticator app, which `auth` prompts for in the terminal. |
 | McGill University | `--mcgill` | Microsoft Entra; myCourses sends you straight to Entra via SAML. |
 | Javeriana Cali | `--javeriana` | MobilityGuard OneGate: password, then an authenticator code that `auth` prompts for in the terminal. Headless sign-in needs the terminal prompt; otherwise use the visible browser. |

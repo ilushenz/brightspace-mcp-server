@@ -14,6 +14,7 @@ import { AuthenticationInProgressError } from "../auth/auth-lock.js";
 import { clearSavedSession, RemoveError } from "../auth/logout.js";
 import { authLockPath } from "../auth/mfa-challenge.js";
 import { log } from "../utils/logger.js";
+import { LOGOUT_COMMAND } from "../utils/commands.js";
 import { SignOutSchema } from "./schemas.js";
 import { withUpdateNotice } from "./tool-helpers.js";
 
@@ -33,7 +34,7 @@ const ALREADY_SIGNED_OUT =
   "You're already signed out of Brightspace on this computer; there was no saved session to remove.";
 const NOTHING_SAVED = "There was no saved session to remove.";
 const UNEXPECTED_FAILURE =
-  "Could not clear the saved session because of an unexpected error. Nothing more was changed; try again, or run `npx -y brightspace-mcp-server@latest auth --logout` in a terminal to see the details.";
+  `Could not clear the saved session because of an unexpected error. Nothing more was changed; try again, or run \`${LOGOUT_COMMAND}\` in a terminal to see the details.`;
 
 function text(message: string, isError = false): CallToolResult {
   const result = withUpdateNotice([{ type: "text", text: message }]);

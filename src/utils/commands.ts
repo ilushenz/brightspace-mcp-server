@@ -19,17 +19,33 @@ import { presetForBaseUrl } from "../setup/presets.js";
 
 export const PACKAGE_NAME = "brightspace-mcp-server";
 
+/**
+ * What `npx` is given to launch this build. This fork is installed straight
+ * from GitHub, not from the npm registry, so every command printed or
+ * registered below names the fork. Naming the published package instead would
+ * quietly swap in the upstream release, which has no University of Hawaiʻi
+ * support.
+ */
+export const PACKAGE_SPEC = "github:ilushenz/brightspace-mcp-server";
+
+/**
+ * False in this fork: npm's "latest" is the upstream release, which says
+ * nothing about this build, so version notices and the stale-copy re-run are
+ * disabled rather than pointing people at a different program.
+ */
+export const CHECKS_NPM_FOR_UPDATES = false;
+
 /** Re-authenticate. Always runs the current published release. */
-export const AUTH_COMMAND = `npx -y ${PACKAGE_NAME}@latest auth`;
+export const AUTH_COMMAND = `npx -y ${PACKAGE_SPEC} auth`;
 
 /** End the saved Brightspace session on this computer. Always runs the current published release. */
-export const LOGOUT_COMMAND = `npx -y ${PACKAGE_NAME}@latest auth --logout`;
+export const LOGOUT_COMMAND = `npx -y ${PACKAGE_SPEC} auth --logout`;
 
 /** Re-run the setup wizard. Always runs the current published release. */
-export const SETUP_COMMAND = `npx -y ${PACKAGE_NAME}@latest setup`;
+export const SETUP_COMMAND = `npx -y ${PACKAGE_SPEC} setup`;
 
 /** Diagnose a broken setup. Always runs the current published release. */
-export const DOCTOR_COMMAND = `npx -y ${PACKAGE_NAME}@latest doctor`;
+export const DOCTOR_COMMAND = `npx -y ${PACKAGE_SPEC} doctor`;
 
 /** Bring a global install up to date. The only fix for a stale `npm i -g` copy. */
 export const GLOBAL_INSTALL_COMMAND = `npm install -g ${PACKAGE_NAME}@latest`;

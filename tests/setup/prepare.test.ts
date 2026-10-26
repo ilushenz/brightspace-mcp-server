@@ -105,7 +105,7 @@ describe("setup --prepare", () => {
     expect(code.writes).toEqual([false]);
     expect(result.restart).toEqual(["Claude Code"]);
     expect(result.next).toMatchObject({
-      command: "npx -y brightspace-mcp-server@latest setup --purdue --sign-in",
+      command: "npx -y github:ilushenz/brightspace-mcp-server setup --purdue --sign-in",
       needsHuman: true,
     });
     expect(result.next.instructions).toContain("Setup complete!");
@@ -221,7 +221,7 @@ describe("setup --prepare", () => {
   it("builds the sign-in command from --url for a school with no flag", async () => {
     const result = await runPrepare(args("--url", "learn.example.edu/"), harness().deps);
     expect(result.school?.baseUrl).toBe("https://learn.example.edu");
-    expect(result.next.command).toBe("npx -y brightspace-mcp-server@latest setup --url https://learn.example.edu --sign-in");
+    expect(result.next.command).toBe("npx -y github:ilushenz/brightspace-mcp-server setup --url https://learn.example.edu --sign-in");
   });
 
   it("installs a missing Chromium once, then reports it ready", async () => {
@@ -237,7 +237,7 @@ describe("setup --prepare", () => {
     const result = await runPrepare(args("--purdue"), h.deps);
     expect(result.state).toBe("blocked");
     expect(result.steps.find((s) => s.id === "browser")?.line).toContain(" repair");
-    expect(result.next.command).toBe("npx -y brightspace-mcp-server@latest setup --purdue --prepare");
+    expect(result.next.command).toBe("npx -y github:ilushenz/brightspace-mcp-server setup --purdue --prepare");
   });
 
   it("skips the download with --no-browser-install", async () => {
@@ -293,7 +293,7 @@ describe("setup --prepare", () => {
       harness({ signedIn: true, targets: [app("Claude Code", { state: "missing" }).target] }).deps,
     );
     expect(result.state).toBe("signed_in");
-    expect(result.next).toMatchObject({ command: "npx -y brightspace-mcp-server@latest doctor --json", needsHuman: false });
+    expect(result.next).toMatchObject({ command: "npx -y github:ilushenz/brightspace-mcp-server doctor --json", needsHuman: false });
     expect(result.next.instructions).toContain("Restart Claude Code");
   });
 

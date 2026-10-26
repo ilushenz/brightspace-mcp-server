@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { PACKAGE_NAME } from "./commands.js";
+import { PACKAGE_SPEC } from "./commands.js";
 
 export interface CliMcpClient {
   id: "codex" | "claude-code";
@@ -68,8 +68,8 @@ export const runCommandWithoutPrompts: CommandRunner = (command, args, stdio) =>
 export function serverCommand(platform: NodeJS.Platform = process.platform): string[] {
   // On Windows, npx is a .cmd shim that must be invoked through cmd.exe
   return platform === "win32"
-    ? ["cmd", "/c", "npx", "-y", `${PACKAGE_NAME}@latest`]
-    : ["npx", "-y", `${PACKAGE_NAME}@latest`];
+    ? ["cmd", "/c", "npx", "-y", PACKAGE_SPEC]
+    : ["npx", "-y", PACKAGE_SPEC];
 }
 
 /**

@@ -313,7 +313,7 @@ describe("sign_out", () => {
     });
     expect(isError).toBe(true);
     expect(text).toBe(
-      "Could not clear the saved session because of an unexpected error. Nothing more was changed; try again, or run `npx -y brightspace-mcp-server@latest auth --logout` in a terminal to see the details."
+      "Could not clear the saved session because of an unexpected error. Nothing more was changed; try again, or run `npx -y github:ilushenz/brightspace-mcp-server auth --logout` in a terminal to see the details."
     );
     expect(text).not.toContain("disk exploded");
     expect(text).not.toContain(dir);

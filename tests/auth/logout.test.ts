@@ -248,7 +248,7 @@ describe("runLogout", () => {
     expect(output()).toMatch(/opened before updating may keep answering for up to an hour/i);
     expect(output()).toMatch(/quit and reopen it/i);
     expect(output()).toMatch(/not sign you out of Microsoft or Brightspace/i);
-    expect(output()).toContain("npx -y brightspace-mcp-server@latest auth");
+    expect(output()).toContain("npx -y github:ilushenz/brightspace-mcp-server auth");
     // Names only, never a path.
     expect(output()).not.toContain(dir);
   });

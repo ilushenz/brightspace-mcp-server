@@ -19,7 +19,7 @@ import { getConfigStorePath } from "./utils/config-store.js";
 import { saveSecureConfig } from "./utils/secure-config.js";
 import { deleteStoredTotpUri, getStoredPassword, getStoredTotpUri } from "./auth/credential-store.js";
 import { askShortcutQuestion, type ShortcutIO } from "./utils/two-factor-shortcuts.js";
-import { DOCTOR_COMMAND, prepareCommand, signInCommand } from "./utils/commands.js";
+import { DOCTOR_COMMAND, PACKAGE_SPEC, prepareCommand, signInCommand } from "./utils/commands.js";
 import { serverCommand } from "./utils/mcp-client-cli.js";
 import { parseSetupArgs, SETUP_USAGE, type SetupArgs } from "./setup/args.js";
 import { buildConfigToSave, isValidUrl, normalizeUrl, readExistingConfig, sameSchool, savedUsername } from "./setup/config.js";
@@ -265,8 +265,8 @@ function printChatGPTInstructions(): void {
   if (!isChatGPTInstalled()) return;
   const isWindows = process.platform === "win32";
   const mcpJson = isWindows
-    ? `{\n  "command": "cmd",\n  "args": ["/c", "npx", "-y", "brightspace-mcp-server@latest"]\n}`
-    : `{\n  "command": "npx",\n  "args": ["-y", "brightspace-mcp-server@latest"]\n}`;
+    ? `{\n  "command": "cmd",\n  "args": ["/c", "npx", "-y", "${PACKAGE_SPEC}"]\n}`
+    : `{\n  "command": "npx",\n  "args": ["-y", "${PACKAGE_SPEC}"]\n}`;
   console.log(yellow("  ChatGPT Desktop detected."));
   console.log(dim("  ChatGPT doesn't support automatic MCP config — add it manually:"));
   console.log(dim("  1. Open ChatGPT Desktop → Settings → Tools → Add MCP tool → Add manually"));

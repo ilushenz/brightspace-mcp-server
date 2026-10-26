@@ -19,6 +19,7 @@ import { configureDevActivity } from "./utils/dev-activity.js";
 import { AUTH_COMMAND, SETUP_COMMAND } from "./utils/commands.js";
 import { initUpdateChecker, peekUpdateNotice } from "./utils/update-checker.js";
 import { reexecLatestIfStale } from "./utils/self-update.js";
+import { CHECKS_NPM_FOR_UPDATES } from "./utils/commands.js";
 import { detectSkew } from "./utils/install-sites.js";
 import { BrowserInstallError } from "./utils/browser-install.js";
 
@@ -50,7 +51,7 @@ async function main(): Promise<void> {
 
   // If this copy is stale, hand off to the current release instead of running
   // our own out-of-date sign-in code. No prompt, no user action.
-  const reexecCode = await reexecLatestIfStale({ installedVersion: pkg.version });
+  const reexecCode = CHECKS_NPM_FOR_UPDATES ? await reexecLatestIfStale({ installedVersion: pkg.version }) : null;
   if (reexecCode !== null) {
     process.exitCode = reexecCode;
     return;
@@ -59,7 +60,7 @@ async function main(): Promise<void> {
   // Both started early so results are ready by the time we print, and awaited
   // in finally so a fast failure cannot outrun them. The skew scan needs no
   // network, so it still reports when the registry is unreachable.
-  const updateCheck = initUpdateChecker({ installedVersion: pkg.version });
+  const updateCheck = CHECKS_NPM_FOR_UPDATES ? initUpdateChecker({ installedVersion: pkg.version }) : Promise.resolve();
   const skewCheck = detectSkew(pkg.version);
 
   try {

@@ -216,8 +216,8 @@ describe("saved settings on a repeat run", () => {
 
 describe("client configuration", () => {
   const brightspaceEntry = process.platform === "win32"
-    ? { command: "cmd", args: ["/c", "npx", "-y", "brightspace-mcp-server@latest"] }
-    : { command: "npx", args: ["-y", "brightspace-mcp-server@latest"] };
+    ? { command: "cmd", args: ["/c", "npx", "-y", "github:ilushenz/brightspace-mcp-server"] }
+    : { command: "npx", args: ["-y", "github:ilushenz/brightspace-mcp-server"] };
 
   it("merges into an existing config without disturbing other servers", () => {
     fs.writeFileSync(configPath, JSON.stringify({
@@ -429,12 +429,12 @@ describe("which questions each mode asks", () => {
 
 describe("setup commands for a school", () => {
   it("uses the school's flag when it has one", () => {
-    expect(signInCommand("https://purdue.brightspace.com")).toBe("npx -y brightspace-mcp-server@latest setup --purdue --sign-in");
-    expect(prepareCommand("https://mylearning.suny.edu/")).toBe("npx -y brightspace-mcp-server@latest setup --suny --prepare");
+    expect(signInCommand("https://purdue.brightspace.com")).toBe("npx -y github:ilushenz/brightspace-mcp-server setup --purdue --sign-in");
+    expect(prepareCommand("https://mylearning.suny.edu/")).toBe("npx -y github:ilushenz/brightspace-mcp-server setup --suny --prepare");
   });
 
   it("falls back to --url, and to the saved school when there's no address", () => {
-    expect(signInCommand("https://learn.example.edu")).toBe("npx -y brightspace-mcp-server@latest setup --url https://learn.example.edu --sign-in");
-    expect(signInCommand()).toBe("npx -y brightspace-mcp-server@latest setup --sign-in");
+    expect(signInCommand("https://learn.example.edu")).toBe("npx -y github:ilushenz/brightspace-mcp-server setup --url https://learn.example.edu --sign-in");
+    expect(signInCommand()).toBe("npx -y github:ilushenz/brightspace-mcp-server setup --sign-in");
   });
 });

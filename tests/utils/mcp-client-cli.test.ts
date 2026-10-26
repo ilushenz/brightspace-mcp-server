@@ -22,11 +22,11 @@ describe("cliMcpClients", () => {
 
     expect(codex.addArgs).toEqual([
       "mcp", "add", "brightspace", "--",
-      "npx", "-y", "brightspace-mcp-server@latest",
+      "npx", "-y", "github:ilushenz/brightspace-mcp-server",
     ]);
     expect(claude.addArgs).toEqual([
       "mcp", "add", "--scope", "user", "brightspace", "--",
-      "npx", "-y", "brightspace-mcp-server@latest",
+      "npx", "-y", "github:ilushenz/brightspace-mcp-server",
     ]);
   });
 
@@ -43,13 +43,13 @@ describe("classifyRegistration", () => {
     expect(classifyRegistration(undefined, "darwin")).toEqual({ state: "missing" });
   });
 
-  it("accepts the npx @latest entry as current", () => {
-    const entry = { command: "npx", args: ["-y", "brightspace-mcp-server@latest"] };
+  it("accepts the fork's npx entry as current", () => {
+    const entry = { command: "npx", args: ["-y", "github:ilushenz/brightspace-mcp-server"] };
     expect(classifyRegistration(entry, "darwin")).toEqual({ state: "current" });
   });
 
   it("accepts the cmd /c form as current on Windows", () => {
-    const entry = { command: "cmd", args: ["/c", "npx", "-y", "brightspace-mcp-server@latest"] };
+    const entry = { command: "cmd", args: ["/c", "npx", "-y", "github:ilushenz/brightspace-mcp-server"] };
     expect(classifyRegistration(entry, "win32")).toEqual({ state: "current" });
   });
 
@@ -244,7 +244,7 @@ describe("Claude Code registration lookup", () => {
     writeClaudeJson({
       projects: {
         [process.cwd()]: {
-          mcpServers: { brightspace: { command: "npx", args: ["-y", "brightspace-mcp-server@latest"] } },
+          mcpServers: { brightspace: { command: "npx", args: ["-y", "github:ilushenz/brightspace-mcp-server"] } },
         },
       },
     });

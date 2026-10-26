@@ -74,7 +74,7 @@ describe("sanitizeError", () => {
 
   it("pins the auth command it tells the user to run", () => {
     const result = sanitizeError(new ApiError(401, "/courses", "Session expired."));
-    expect(result.content[0].text).toContain("brightspace-mcp-server@latest");
+    expect(result.content[0].text).toContain("github:ilushenz/brightspace-mcp-server");
   });
 
   it("leaves unrelated errors alone", async () => {

@@ -48,6 +48,7 @@ import {
   prepareCommand,
   signInCommand,
   envCredentialRejectedMessage,
+  CHECKS_NPM_FOR_UPDATES,
 } from "./utils/commands.js";
 import { ApiError } from "./api/errors.js";
 import { chromiumReady, chromiumStatus, dependencyRepairHint, BROWSER_REPAIR_COMMAND, type ChromiumStatus } from "./utils/browser-install.js";
@@ -141,7 +142,7 @@ function defaultDoctorDeps(): DoctorDeps {
       const response = await apiClient.get<{ Items?: unknown[] | null; PagingInfo?: { HasMoreItems?: boolean | null } | null }>(coursesPath);
       return { count: response?.Items?.length ?? 0, hasMore: Boolean(response?.PagingInfo?.HasMoreItems) };
     },
-    fetchLatestVersion,
+    fetchLatestVersion: CHECKS_NPM_FOR_UPDATES ? fetchLatestVersion : async () => null,
     chromiumStatus: () => chromiumStatus(),
     installKind: installKindOf(),
     installedVersion: readInstalledVersion(),

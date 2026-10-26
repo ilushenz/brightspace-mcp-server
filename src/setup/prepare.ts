@@ -24,7 +24,7 @@ import {
   PLAYWRIGHT_INSTALL_HINT,
   type ChromiumStatus,
 } from "../utils/browser-install.js";
-import { DOCTOR_COMMAND, prepareCommand, signInCommand } from "../utils/commands.js";
+import { DOCTOR_COMMAND, PACKAGE_SPEC, prepareCommand, signInCommand } from "../utils/commands.js";
 import { runCommandWithoutPrompts } from "../utils/mcp-client-cli.js";
 import type { SetupArgs } from "./args.js";
 import { buildConfigToSave, isValidUrl, normalizeUrl, readExistingConfig, sameSchool } from "./config.js";
@@ -279,7 +279,7 @@ export async function runPrepare(args: SetupArgs, overrides: Partial<PrepareDeps
   const apps = registerAll(targets, { replace: args.replace });
   steps.push(...apps.map(appLine));
   if (targets.length === 0) {
-    steps.push(fail("app", "No supported AI app found — register `npx -y brightspace-mcp-server@latest` in your app by hand", false));
+    steps.push(fail("app", `No supported AI app found — register \`npx -y ${PACKAGE_SPEC}\` in your app by hand`, false));
   }
   const restart = apps.filter((a) => a.outcome === "added" || a.outcome === "replaced").map((a) => a.name);
 
