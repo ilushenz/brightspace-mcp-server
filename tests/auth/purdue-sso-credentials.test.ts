@@ -152,6 +152,17 @@ describe("PurdueSSOFlow credential choreography ported from Brightspace Bar", ()
     expect(form.next.click).not.toHaveBeenCalled();
   });
 
+  it("fills Apereo CAS's plain `username` field and the co-visible password in one pass (UH)", async () => {
+    // authn.hawaii.edu names its username field `username`. Left out of the
+    // known fields, the page looks password-only: the password is typed and
+    // the form submitted with no username, so CAS never reaches Duo.
+    const form = makePage({ emailSelector: "input[name=username]", passwordDuringEmail: true });
+    await enterCredentials(new PurdueSSOFlow({ username: "student", password: PASSWORD }), form.page);
+    expect(form.actions).toEqual(["email", "password", "submit"]);
+    expect(form.email.fill).toHaveBeenCalledWith("student");
+    expect(form.next.click).not.toHaveBeenCalled();
+  });
+
   it("can submit only the public account name before deciding whether a password is needed", async () => {
     const form = makePage({ passwordDelayMs: 500 });
     const flow = new PurdueSSOFlow({ username: "student", password: PASSWORD, baseUrl: PURDUE });

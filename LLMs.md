@@ -26,7 +26,7 @@ npx -y brightspace-mcp-server@latest setup --purdue --prepare --username <their 
 
 How to run it:
 
-- **School:** use the school's flag: `--purdue`, `--suny`, `--western`, `--tudelft`, `--cuny`, `--leiden`, `--mcgill`, `--ngeeann` or `--javeriana`. For any other school, use `--url <their Brightspace address>` instead.
+- **School:** use the school's flag: `--purdue`, `--suny`, `--western`, `--tudelft`, `--cuny`, `--leiden`, `--mcgill`, `--ngeeann`, `--javeriana` or `--uh`. For any other school, use `--url <their Brightspace address>` instead.
 - **SUNY campus:** add `--campus "<campus>"` if you know it. Otherwise stage 2 asks.
 - **Timeout:** allow several minutes. A first run can download Chromium (about 200 MB).
 

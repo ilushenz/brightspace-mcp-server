@@ -16,8 +16,11 @@ import { generateTotp, secondsUntilFreshCode } from "./totp.js";
 import type { RememberMfaOutcome, RememberMfaResult } from "./microsoft-session.js";
 
 // Entra names its username field type=email/loginfmt; Shibboleth portals (USC's
-// login.usc.edu among them) use the protocol's j_username.
-const EMAIL_SELECTORS = ["input[type=email]", "input[name=loginfmt]", "input[name=j_username]", "input#signinid"];
+// login.usc.edu among them) use the protocol's j_username; Apereo CAS (the
+// University of Hawaiʻi's authn.hawaii.edu) names it plain `username`. Without
+// that last entry a CAS page looks like a password-only page, so only the
+// password gets typed and the form is submitted with no username.
+const EMAIL_SELECTORS = ["input[type=email]", "input[name=loginfmt]", "input[name=j_username]", "input#signinid", "input[name=username]"];
 const PASSWORD_SELECTORS = ["input[type=password]", "input[name=passwd]"];
 const SUBMIT_SELECTORS = ["#idSIButton9", "input[type=submit]", "button[type=submit]"];
 const FIELD_TIMEOUT_MS = 30_000;

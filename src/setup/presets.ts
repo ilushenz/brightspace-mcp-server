@@ -80,6 +80,13 @@ export const SCHOOL_PRESETS: Record<string, SchoolPreset> = {
     usernameLabel: "Javeriana username",
     mfaNote: "OneGate asks for a code from your authenticator app when you sign in.",
   },
+  uh: {
+    name: "University of Hawaiʻi (Lāmakū)",
+    baseUrl: "https://lamaku.hawaii.edu",
+    usernameLabel: "UH username",
+    mfaNote: "Approve the Duo push on your phone.",
+    usernameHint: "Use your UH username, the part before @hawaii.edu.",
+  },
 };
 
 /** The preset whose school runs at `baseUrl`, compared by origin. */

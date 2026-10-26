@@ -30,7 +30,7 @@ Works with Claude Desktop, Claude Code, Cursor, ChatGPT Desktop, Windsurf, and a
    **On a Mac:** when Keychain asks whether `node` may use the saved Brightspace password, choose **Always Allow**, not just Allow. That lets later sign-ins (the `auth` command and questions from your AI app) read it without asking again.
 3. **Restart your AI app and ask it something** — the first question signs you in. If your phone asks you to approve a sign-in, approve it and ask again.
 
-At one of these schools, add the flag and skip typing the address: `--purdue`, `--suny`, `--western`, `--tudelft`, `--cuny`, `--leiden`, `--mcgill`, `--ngeeann`, `--javeriana`.
+At one of these schools, add the flag and skip typing the address: `--purdue`, `--suny`, `--western`, `--tudelft`, `--cuny`, `--leiden`, `--mcgill`, `--ngeeann`, `--javeriana`, `--uh`.
 
 **Rather have the AI install it for you?** Paste this into Claude Code, Cursor, Windsurf, Copilot, or Codex:
 
@@ -59,6 +59,7 @@ If your school uses D2L Brightspace, yes. These have automatic sign-in built in:
 | McGill University | Microsoft Entra | `--mcgill` |
 | Javeriana Cali | OneGate (password + authenticator code) | `--javeriana` |
 | Ngee Ann Polytechnic | Microsoft Entra | `--ngeeann` |
+| University of Hawaiʻi (Lāmakū) | UH CAS + Duo (push approval) | `--uh` |
 | Any other D2L school | Paste your Brightspace address. If the login page isn't recognized, pick option 2 at setup's sign-in question so the page opens for you to finish by hand | none |
 
 School-specific quirks: [docs/sign-in.md](docs/sign-in.md#per-school-notes).
